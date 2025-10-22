@@ -9,52 +9,52 @@ import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { routes } from "./routes";
 import { CategoryProvider } from "./Hooks/useCategory";
 import { ToastProvider } from "./context/ToastContext";
-import { AuthProvider } from "./context/AuthContext";
-import { CartProvider } from "./context/CartProvider";
+// import { AuthProvider } from "./context/AuthContext";
+// import { CartProvider } from "./context/CartProvider";
 
 // Import custom CSS
 import "./css/category.css";
 
 function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <CartProvider>
-          <div>
-            <CategoryProvider>
-              <Router>
-                <Routes>
-                  {/* Redirect "/" sang "/about" */}
-                  {/* <Route
+    // <AuthProvider>
+    <ToastProvider>
+      {/* <CartProvider> */}
+      <div>
+        <CategoryProvider>
+          <Router>
+            <Routes>
+              {/* Redirect "/" sang "/about" */}
+              {/* <Route
 
               path="/"
               element={<Navigate to="/user-info-detail" replace />}
             /> */}
 
-                  {routes.map((route) => {
-                    const Page = route.page;
-                    const Layout = route.isShowHeader
-                      ? DefaultComponent
-                      : React.Fragment;
-                    return (
-                      <Route
-                        key={route.path}
-                        path={route.path}
-                        element={
-                          <Layout>
-                            <Page />
-                          </Layout>
-                        }
-                      />
-                    );
-                  })}
-                </Routes>
-              </Router>
-            </CategoryProvider>
-          </div>
-        </CartProvider>
-      </ToastProvider>
-    </AuthProvider>
+              {routes.map((route) => {
+                const Page = route.page;
+                const Layout = route.isShowHeader
+                  ? DefaultComponent
+                  : React.Fragment;
+                return (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={
+                      <Layout>
+                        <Page />
+                      </Layout>
+                    }
+                  />
+                );
+              })}
+            </Routes>
+          </Router>
+        </CategoryProvider>
+      </div>
+      {/* </CartProvider> */}
+    </ToastProvider>
+    // </AuthProvider>
   );
 }
 
