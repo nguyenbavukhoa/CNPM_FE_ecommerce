@@ -3,12 +3,12 @@ import styles from "./HeaderComponent.module.css";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCategory, useCategories } from "../../Hooks/useCategory";
 // import { useCart } from "../../context/CartProvider";
-// import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function HeaderComponent() {
   // 1. LẤY HÀM `getAmountCart` TỪ CONTEXT
   // const { openCart, getAmountCart } = useCart();
-  // const { auth, logout, isLoggedIn } = useAuth();
+  const { auth, logout, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   // Gọi hàm để lấy tổng số lượng, nếu kết quả là null/undefined thì mặc định là 0
@@ -97,7 +97,7 @@ export default function HeaderComponent() {
                 <li className="header-middle-right-item dropdown open">
                   <i className="fa-light fa-user"></i>
                   <div className="auth-container">
-                    {/* {!isLoggedIn ? (
+                    {!isLoggedIn ? (
                       <>
                         <span className="text-dndk">Đăng nhập / Đăng ký</span>
                         <span className="text-tk">
@@ -113,9 +113,9 @@ export default function HeaderComponent() {
                           <i className="fa-sharp fa-solid fa-caret-down"></i>
                         </span>
                       </>
-                    )} */}
+                    )}
                   </div>
-                  {/* <ul className="header-middle-right-menu">
+                  <ul className="header-middle-right-menu">
                     {!isLoggedIn ? (
                       <>
                         <li>
@@ -160,7 +160,7 @@ export default function HeaderComponent() {
                         </li>
                       </>
                     )}
-                  </ul> */}
+                  </ul>
                 </li>
 
                 {/* Cart */}
@@ -175,6 +175,14 @@ export default function HeaderComponent() {
                   </div>
                   <span>Giỏ hàng</span>
                 </li> */}
+                <li className="header-middle-right-item open">
+                  <div className="cart-icon-menu">
+                    <i className="fa-light fa-basket-shopping"></i>
+                    {/* Hiển thị số lượng một cách an toàn */}
+                    <span className="count-product-cart">0</span>
+                  </div>
+                  <span>Giỏ hàng</span>
+                </li>
               </ul>
             </div>
           </div>
