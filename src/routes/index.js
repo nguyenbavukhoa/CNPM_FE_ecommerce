@@ -1,11 +1,11 @@
 import { useSearchParams } from "react-router-dom";
 import HomePage from "../pages/HomePage/HomePage";
-//import OrderHistoryPage from "../pages/OrderHistoryPage/OrderPage.jsx";
+import OrderHistoryPage from "../pages/OrderHistoryPage/OrderPage.jsx";
 import AuthPage from "../pages/AuthPage/AuthPage.jsx";
 // import AdminPage from "../pages/AdminPage/AdminPage";
 // import AdminLogin from "../pages/AdminLogin.jsx/AdminLogin.jsx";
 import CheckoutPage from "../pages/CheckoutPage/CheckoutPage"; // Import trang Checkout
-//import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
 export const routes = [
   {
     path: "/",
@@ -17,16 +17,16 @@ export const routes = [
     page: CheckoutPage,
     // isShowHeader: true,
   },
-  // {
-  //   path: "/order-history",
-  //   page: OrderHistoryPage,
-  //   isShowHeader: true,
-  // },
-  // {
-  //   path: "/user-info", // For signup and signin
-  //   page: ProfilePage,
-  //   isShowHeader: true,
-  // },
+  {
+    path: "/order-history",
+    page: OrderHistoryPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/user-info", // For signup and signin
+    page: ProfilePage,
+    isShowHeader: true,
+  },
   {
     path: "/auth", // For signup and signin
     page: AuthPage,

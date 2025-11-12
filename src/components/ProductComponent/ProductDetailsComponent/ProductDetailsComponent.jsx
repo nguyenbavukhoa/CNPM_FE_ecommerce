@@ -1,7 +1,7 @@
 // src/components/ProductDetailsComponent/ProductDetailsComponent.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { vnd } from "../../../utils/vnd"; // Hàm format tiền tệ
-// import { useCart } from "../../../context/CartProvider";
+import { useCart } from "../../../context/CartProvider"; //
 import ImageWithFallback from "../../ImageWithFallbackComponent/ImageWithFallback";
 import VariantOptions from "../../VariantOptionComponent/VariantOptions";
 import useProductDetail from "../../../hooks/useProductDetail";
@@ -13,7 +13,7 @@ const ProductDetailsComponent = ({
   onOrderNow,
 }) => {
   const { product, loading, error } = useProductDetail(productId);
-  //const { addItemToCart, openCart } = useCart(); // 👈 Lấy hàm addItemToCart từ context
+  const { addItemToCart, openCart } = useCart(); // 👈 Lấy hàm addItemToCart từ context
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
@@ -57,10 +57,10 @@ const ProductDetailsComponent = ({
       note: note,
     };
 
-    //await addItemToCart(cartItemData);
+    await addItemToCart(cartItemData);
     // Tùy chọn: hiển thị thông báo thành công, sau đó mở giỏ hàng
     alert("Đã thêm vào giỏ hàng!");
-    //openCart();
+    openCart();
     onClose(); // Đóng modal chi tiết sản phẩm
   };
 
