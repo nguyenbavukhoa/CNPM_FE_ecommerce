@@ -2,8 +2,8 @@ import { useSearchParams } from "react-router-dom";
 import HomePage from "../pages/HomePage/HomePage";
 import OrderHistoryPage from "../pages/OrderHistoryPage/OrderPage.jsx";
 import AuthPage from "../pages/AuthPage/AuthPage.jsx";
-// import AdminPage from "../pages/AdminPage/AdminPage";
-// import AdminLogin from "../pages/AdminLogin.jsx/AdminLogin.jsx";
+import AdminPage from "../pages/AdminPage/AdminPage";
+import AdminLogin from "../pages/AdminLogin.jsx/AdminLogin.jsx";
 import CheckoutPage from "../pages/CheckoutPage/CheckoutPage"; // Import trang Checkout
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 export const routes = [
@@ -32,14 +32,14 @@ export const routes = [
     page: AuthPage,
     isShowHeader: true,
   },
-  // {
-  //   path: "/admin", // For admin dashboard
-  //   page: AdminPage,
-  //   // isShowHeader: true,
-  // },
-  // {
-  //   path: "/admin-login", // For signin admin
-  //   page: AdminLogin,
-  //   // isShowHeader: true,
-  // },
+  {
+    path: "/admin", // For admin dashboard
+    page: AdminPage,
+    // isShowHeader: true,
+  },
+  {
+    path: "/admin-login", // For signin admin
+    page: AdminLogin,
+    // isShowHeader: true,
+  },
 ];
