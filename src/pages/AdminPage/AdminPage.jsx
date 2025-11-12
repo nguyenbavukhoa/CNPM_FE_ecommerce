@@ -7,7 +7,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 
 // Sections (Các tab nội dung)
 import Dashboard from "./sections/Dashboard/Dashboard";
-
+import Products from "./sections/Products/Products";
 import Customers from "./sections/Customers/Customers";
 import Orders from "./sections/Orders/Orders";
 import Statistics from "./sections/Statistics/Statistics";
@@ -64,6 +64,8 @@ const AdminPage = () => {
     switch (activeTab) {
       case "Dashboard":
         return <Dashboard />;
+      case "Products":
+        return <Products />;
       case "Customers":
         return <Customers />;
       case "Orders":
