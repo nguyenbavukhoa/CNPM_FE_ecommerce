@@ -4,7 +4,7 @@ import { vnd } from "../../../utils/vnd"; // Hàm format tiền tệ
 // import { useCart } from "../../../context/CartProvider";
 import ImageWithFallback from "../../ImageWithFallbackComponent/ImageWithFallback";
 import VariantOptions from "../../VariantOptionComponent/VariantOptions";
-import useProductDetail from "../../../Hooks/useProductDetail";
+import useProductDetail from "../../../hooks/useProductDetail";
 
 const ProductDetailsComponent = ({
   productId,

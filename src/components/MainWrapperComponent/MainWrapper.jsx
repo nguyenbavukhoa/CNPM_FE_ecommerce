@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useCategory } from "../../Hooks/useCategory";
-import { useProducts } from "../../Hooks/useProducts";
+import { useFilters } from "../../context/FilterProvider";
+import { useProducts } from "../../hooks/useProducts";
 
 import banner2 from "../../assets/images/banner-2.png";
 import banner3 from "../../assets/images/banner-3.png";
@@ -12,20 +12,27 @@ import ProductList from "../ProductComponent/ProductListComponent/ProductListCom
 const banners = [banner2, banner3, banner4, banner5];
 export default function MainComponent({ onProductDetail }) {
   const [current, setCurrent] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  // Get the selected category from the context
-  const [selectedCategory] = useCategory();
+  // LẤY FILTER TỪ CONTEXT:
+  // 'filters' là một object chứa MỌI THỨ (name, category, price, page...)
+  const { filters, setFilters } = useFilters();
 
-  // Sử dụng useProducts với selectedCategory
-  const { data, isLoading, error } = useProducts(selectedCategory, currentPage);
+  // TRUYỀN TOÀN BỘ OBJECT 'filters' VÀO useProducts
+  // useProducts sẽ tự động chạy lại khi 'filters' thay đổi
+  const { data, isLoading, error } = useProducts(filters);
 
-  const { products, totalPages } = data || { products: [] };
+  // Lấy 'products' và 'totalPages' từ 'data'
+  const { products, totalPages } = data || { products: [], totalPages: 0 };
 
-  // Mỗi khi category thay đổi => reset về page 1
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory]);
+  // HÀM XỬ LÝ PHÂN TRANG
+  const handlePageChange = (newPage) => {
+    // Gọi 'setFilters' để cập nhật trang trong context
+    setFilters({ page: newPage });
+    // Cuộn lên đầu
+    document
+      .getElementById("home-service")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
 
   // Auto slide
   useEffect(() => {
@@ -106,18 +113,10 @@ export default function MainComponent({ onProductDetail }) {
               <li
                 key={i + 1}
                 className={`page-nav-item ${
-                  currentPage === i + 1 ? "active" : ""
+                  filters.page === i + 1 ? "active" : ""
                 }`}
               >
-                <a
-                  href="#!"
-                  onClick={() => {
-                    setCurrentPage(i + 1);
-                    document
-                      .getElementById("home-service")
-                      .scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
+                <a href="#!" onClick={() => handlePageChange(i + 1)}>
                   {i + 1}
                 </a>
               </li>

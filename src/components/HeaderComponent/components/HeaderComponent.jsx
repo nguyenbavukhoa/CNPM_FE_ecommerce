@@ -1,18 +1,84 @@
-import logo from "../../assets/images/logo/logo_v1.jpeg";
-import styles from "./HeaderComponent.module.css";
+import logo from "../../../assets/images/logo/logo_v1.jpeg";
+import styles from "../styles/HeaderComponent.module.css";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { useCategory, useCategories } from "../../Hooks/useCategory";
-// import { useCart } from "../../context/CartProvider";
-import { useAuth } from "../../context/AuthContext";
+import { useFilters, useCategories } from "../../../context/FilterProvider";
+import { useCart } from "../../../context/CartProvider";
+import { useAuth } from "../../../context/AuthContext";
+import { useState, useEffect } from "react";
+import { useDebounce } from "../hooks/useDebounce";
+import AdvancedSearch from "./AdvancedSearch";
+
+// --- BƯỚC 1: Tạo hàm cuộn ---
+const scrollToProducts = () => {
+  // ID "home-service" được lấy từ file HTML gốc của bạn
+  document
+    .getElementById("home-service")
+    ?.scrollIntoView({ behavior: "smooth" });
+};
 
 export default function HeaderComponent() {
   // 1. LẤY HÀM `getAmountCart` TỪ CONTEXT
-  // const { openCart, getAmountCart } = useCart();
+  const { openCart, getAmountCart } = useCart();
   const { auth, logout, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
+  // Lấy filter và hàm setFilters từ hook useFilters
+  const { filters, setFilters } = useFilters();
+
+  // Tạo local state cho ô search (để gõ mượt)
+  const [searchTerm, setSearchTerm] = useState(filters.name);
+
+  // Lấy giá trị đã được "trì hoãn"
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
+
+  // Hàm cuộn khi search (debounced) ---
+  useEffect(() => {
+    // Chỉ cuộn nếu người dùng thực sự gõ gì đó
+    const isSearching = searchTerm !== filters.name;
+    // Cập nhật state trong Context
+    setFilters({ name: debouncedSearchTerm });
+    if (isSearching) {
+      setTimeout(scrollToProducts, 0);
+    }
+  }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    setSearchTerm(filters.name);
+  }, [filters.name]);
+
+  // Effect này sẽ chạy khi giá trị "trì hoãn" thay đổi
+  useEffect(() => {
+    // Cập nhật URL, hook useProducts sẽ tự động chạy lại
+    setFilters({ name: debouncedSearchTerm });
+  }, [debouncedSearchTerm]); // Chỉ chạy khi debouncedSearchTerm thay đổi
+
+  // Cập nhật lại ô search nếu người dùng bấm back/forward
+  useEffect(() => {
+    setSearchTerm(filters.name);
+  }, [filters.name]);
+
+  // -------- State để quản lý việc mở/đóng filter -----
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Hàm xử lý nút "Lọc" (click)
+  const handleToggleFilterClick = (e) => {
+    e.preventDefault();
+    setIsFilterOpen((prev) => !prev);
+    setTimeout(scrollToProducts, 0);
+  };
+
+  // Hàm xử lý "Enter" trong ô input
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setIsFilterOpen((prev) => !prev);
+      setTimeout(scrollToProducts, 0);
+    }
+  };
+  // ----------------------------------------------------
+
   // Gọi hàm để lấy tổng số lượng, nếu kết quả là null/undefined thì mặc định là 0
-  // const totalAmount = getAmountCart() ?? 0;
+  const totalAmount = getAmountCart() ?? 0;
 
   // Lấy thông tin về trang hiện tại
   const location = useLocation();
@@ -74,7 +140,11 @@ export default function HeaderComponent() {
 
             {/* Search */}
             <div className="header-middle-center">
-              <form action="" className="form-search">
+              <form
+                action=""
+                className="form-search"
+                onSubmit={(e) => e.preventDefault()}
+              >
                 <span className="search-btn">
                   <i className="fa-light fa-magnifying-glass"></i>
                 </span>
@@ -82,8 +152,15 @@ export default function HeaderComponent() {
                   type="text"
                   className="form-search-input"
                   placeholder="Tìm kiếm món ăn..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
                 />
-                <button type="button" className="filter-btn">
+                <button
+                  type="button"
+                  className="filter-btn"
+                  onClick={handleToggleFilterClick}
+                >
                   <i className="fa-light fa-filter-list"></i>
                   <span>Lọc</span>
                 </button>
@@ -164,22 +241,14 @@ export default function HeaderComponent() {
                 </li>
 
                 {/* Cart */}
-                {/* <li
+                <li
                   className="header-middle-right-item open"
                   onClick={openCart}
                 >
                   <div className="cart-icon-menu">
-                    <i className="fa-light fa-basket-shopping"></i> */}
-                {/* Hiển thị số lượng một cách an toàn */}
-                {/* <span className="count-product-cart">{totalAmount}</span>
-                  </div>
-                  <span>Giỏ hàng</span>
-                </li> */}
-                <li className="header-middle-right-item open">
-                  <div className="cart-icon-menu">
                     <i className="fa-light fa-basket-shopping"></i>
                     {/* Hiển thị số lượng một cách an toàn */}
-                    <span className="count-product-cart">0</span>
+                    <span className="count-product-cart">{totalAmount}</span>
                   </div>
                   <span>Giỏ hàng</span>
                 </li>
@@ -188,27 +257,34 @@ export default function HeaderComponent() {
           </div>
         </div>
       </header>
+
+      <AdvancedSearch
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+      />
+
       {isHeaderBottomVisible && <HeaderBottom />}
     </>
   );
 }
 
 function HeaderBottom() {
-  const [selectedCategory, showCategory] = useCategory();
+  // Hook useFilters giờ cũng cung cấp category
+  const { filters, setFilters } = useFilters();
   const { data: categories = [] } = useCategories(); // mặc định mảng rỗng
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleCategoryChange = (e, cat) => {
+  const handleCategoryChange = (e, catId) => {
     e.preventDefault();
-    showCategory(cat);
+    setFilters({ category: catId }); // Gọi setFilters của context
 
     if (location.pathname === "/") {
-      document
-        .getElementById("home-service")
-        ?.scrollIntoView({ behavior: "smooth" });
+      // Gọi hàm cuộn khi đổi category ---
+      setTimeout(scrollToProducts, 0);
     } else {
       navigate(`/`);
+      // Trang sẽ tự cuộn khi điều hướng
     }
   };
 
@@ -218,9 +294,9 @@ function HeaderBottom() {
         <ul className="menu-list">
           <li className="menu-list-item">
             <a
-              href="/products?category=all"
+              href="#"
               className={`menu-link ${
-                selectedCategory === "all" ? "active" : ""
+                filters.category === "all" ? "active" : ""
               }`}
               onClick={(e) => handleCategoryChange(e, "all")}
             >
@@ -231,9 +307,9 @@ function HeaderBottom() {
           {categories.map((cat) => (
             <li key={cat.id} className="menu-list-item">
               <a
-                href={`/products?category=${cat.name}`}
+                href="#"
                 className={`menu-link ${
-                  selectedCategory === cat.id ? "active" : ""
+                  filters.category === cat.id ? "active" : ""
                 }`}
                 onClick={(e) => handleCategoryChange(e, cat.id)}
               >
